@@ -1,5 +1,5 @@
 import * as SQLite from "expo-sqlite";
-import { ObjetivoProgreso, Prioridad, Tarea } from "../types";
+import { Idea, ObjetivoProgreso, Prioridad, Tarea } from "../types";
 
 let db: SQLite.SQLiteDatabase | null = null;
 
@@ -22,6 +22,13 @@ async function getDb() {
         titulo TEXT NOT NULL,
         descripcion TEXT DEFAULT '',
         creadoEn TEXT NOT NULL
+      );
+      CREATE TABLE IF NOT EXISTS ideas (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        titulo TEXT NOT NULL, 
+        contenido TEXT DEFAULT '',
+        etiquetas TEXT DEFAULT '',
+        creadaEn TEXT NOT NULL
       );
     `);
   }
@@ -99,4 +106,32 @@ export async function borrarObjetivo(id: number) {
   const database = await getDb();
   await database.runAsync("UPDATE tareas SET objetivoId = NULL WHERE objetivoId = ?", [id]);
   await database.runAsync("DELETE FROM objetivos WHERE id = ?", [id]);
+}
+
+export async function obtenerIdeas(): Promise<Idea[]> {
+  const database = await getDb();
+  const rows = await database.getAllAsync<any>(
+    "SELECT * FROM ideas ORDER BY id DESC"
+  );
+  return rows.map((r) => ({
+    ...r,
+    etiquetas: r.etiquetas ? r.etiquetas.split(",") : [],
+  }));
+}
+
+export async function crearIdea(
+  titulo: string,
+  contenido: string,
+  etiquetas: string[]
+) {
+  const database = await getDb();
+  await database.runAsync(
+    "INSERT INTO ideas (titulo, contenido, etiquetas, creadaEn) VALUES (?, ?, ?, ?)",
+    [titulo, contenido, etiquetas.join(","), new Date().toISOString()]
+  );
+}
+
+export async function borrarIdea(id: number) {
+  const database = await getDb();
+  await database.runAsync("DELETE FROM ideas WHERE id = ?", [id]);
 }

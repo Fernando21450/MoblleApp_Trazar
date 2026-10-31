@@ -21,3 +21,11 @@ export interface ObjetivoProgreso extends Objetivo{
   total: number;
   hechas: number;
 }
+
+export interface Idea {
+  id: number;
+  titulo: string;
+  contenido: string;
+  etiquetas: string[];
+  creadaEn: string;
+}

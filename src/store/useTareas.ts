@@ -11,7 +11,7 @@ import { Prioridad, Tarea } from "../types";
 interface TareasState {
   tareas: Tarea[];
   cargar: () => Promise<void>;
-  agregar: (titulo: string, fecha: string, prioridad: Prioridad, objetivoId: number | null) => Promise<void>;
+  agregar: (titulo: string, fecha: string, prioridad: Prioridad, objetivoId?: number | null) => Promise<void>;
   alternar: (id: number, completada: boolean) => Promise<void>;
   editar: (id: number, titulo: string) => Promise<void>;
   eliminar: (id: number) => Promise<void>;
